@@ -1,13 +1,17 @@
-use crate::lexer::Token;
+use crate::lexer::{Token, Types};
 use logos::{Logos, Lexer};
 
-enum Types<'a> {
+#[derive(Debug)]
+enum Value {
     Number(f64),
     String(String),
-    Array(&'a Types<'a>)
+    None
 }
-enum Sentences<'a> {
-    Define(String, Types<'a>)
+
+#[derive(Debug)]
+enum Sentences {
+    Define(String, Types, Value),
+    Error
 }
 
 pub fn parser(text: String) {
@@ -22,9 +26,28 @@ pub fn parser(text: String) {
 
     println!("LEXER GROUPINGS");
     let lexer_group: Vec<Vec<Token>> = split_lexer(lexer);
+
+    let mut parsed: Vec<Sentences> = vec![];
+    for i in lexer_group {
+        if let vec![Token::Word(x), Token::Assign, Token::Number(y)] = i { // x = y; where y is a valid number
+            parsed.push(Sentences::Define(x, Types::Number, Value::Number(y)));
+        } else if let vec![Token::Word(x), Token::SetType, Token::Type(Types::Number), Number(y)] = i { // x: number = y;
+            parsed.push(Sentences::Define(x, Types::Number, Value::Number(y)));
+        } else if let vec![Token::Word(x), Token::Assign, Token::String(y)] = i {
+            parsed.push
+        }
+
+        parsed.push(match i {
+            vec![Token::Word(x), Token::Assign, Token::Number(y)] => Sentences::Define(x, Types::Number, Value::Number(y)), // x = y; where y is a valid number
+            vec![Token::Word(x), Token::SetType, Token::Type(Types::Number), Number(y)] => Sentences::Define(x, Types::Number, Value::Number(y)), // x: number = y;
+            _ => Sentences::Error
+        })
+
+    }
+    println!("{:#?}", parsed);
 }
 
-fn printl(mut lexer: Lexer<Token>, n: u8, mut a: Vec<Token>) -> Vec<Token> {
+fn printl(mut lexer: Lexer<Token>, n: u8, mut a: Vec<Token>) -> Vec<Token> { // TODO make this into lexer.collect()
     if let Some(l) = lexer.next() {
         println!("{} {:?}", format!("{:0>2x}", n), l);
         a.push(l);

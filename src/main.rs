@@ -4,7 +4,7 @@ mod parser;
 
 fn main() {
     parser::parser(String::from(r"
-        foo = 10;
+        foo: string = 'hello world';
         bar: number = 20;
     "))
 }
