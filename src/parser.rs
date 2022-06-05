@@ -29,17 +29,11 @@ pub fn parser(text: String) {
 
     let mut parsed: Vec<Sentences> = vec![];
     for i in lexer_group {
-        if let vec![Token::Word(x), Token::Assign, Token::Number(y)] = i { // x = y; where y is a valid number
-            parsed.push(Sentences::Define(x, Types::Number, Value::Number(y)));
-        } else if let vec![Token::Word(x), Token::SetType, Token::Type(Types::Number), Number(y)] = i { // x: number = y;
-            parsed.push(Sentences::Define(x, Types::Number, Value::Number(y)));
-        } else if let vec![Token::Word(x), Token::Assign, Token::String(y)] = i {
-            parsed.push
-        }
-
         parsed.push(match i {
             vec![Token::Word(x), Token::Assign, Token::Number(y)] => Sentences::Define(x, Types::Number, Value::Number(y)), // x = y; where y is a valid number
-            vec![Token::Word(x), Token::SetType, Token::Type(Types::Number), Number(y)] => Sentences::Define(x, Types::Number, Value::Number(y)), // x: number = y;
+            vec![Token::Word(x), Token::SetType, Token::Type(Types::Number), Token::Number(y)] => Sentences::Define(x, Types::Number, Value::Number(y)), // x: number = y;
+            vec![Token::Word(x), Token::Assign, Token::String(y)] => Sentences::Define(x, Types::String, Value::String(y)), // x = y; where y is a valid string
+            vec![Token::Word(x), Token::SetType, Token::Type(Types::String), Token::String(y)] => Sentences::Define(x, Types::String, Value::String(y)), // x: string = y;
             _ => Sentences::Error
         })
 
