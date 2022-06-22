@@ -1,0 +1,6 @@
+module std;
+platform any;
+
+fun main <args: [string]> (
+    ()
+);
